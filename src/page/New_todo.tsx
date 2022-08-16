@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Box } from "@mui/system";
-import { Button, Typography, TextField, Input } from "@mui/material";
+import { Button, Typography, TextField } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { TodoList } from "../modules";
@@ -30,10 +30,10 @@ const New_todo = () => {
     <Container
       maxWidth="md"
       component="form"
-      onSubmit={handleSubmit((data) => {
+      onSubmit={handleSubmit(async(data) => {
         console.log(data);
         //NOTE API發不出去
-        axios.post('/api/todoList/',{
+        await axios.post('/api/todoList/',{
           name: data.name,
           description: data.description
         })
