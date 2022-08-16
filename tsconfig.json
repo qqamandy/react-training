@@ -18,7 +18,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "noImplicitAny": false, //是否在表達式和聲明上有隱含any類型時報錯
   },
   "include": [
     "src"
