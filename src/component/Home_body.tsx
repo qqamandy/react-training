@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { TodoListSummary } from "../modules";
+import { useTranslation } from "react-i18next";
 
 //Table 樣式設定
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -20,6 +21,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const Home_body = () => {
   const [TodoListSummary, setTodoListSummary] = useState<TodoListSummary>();
+  const {t, i18n} = useTranslation();
 
   useEffect(() => {
     //axios抓資料
@@ -36,10 +38,10 @@ const Home_body = () => {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Title</StyledTableCell>
-            <StyledTableCell align="left">Create At</StyledTableCell>
-            <StyledTableCell align="left">Description</StyledTableCell>
-            <StyledTableCell align="left">Detail Count</StyledTableCell>
+            <StyledTableCell>{t("home_body_title")}</StyledTableCell>
+            <StyledTableCell align="left">{t("home_body_create_at")}</StyledTableCell>
+            <StyledTableCell align="left">{t("home_body_description")}</StyledTableCell>
+            <StyledTableCell align="left">{t("home_body_detail_count")}</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>

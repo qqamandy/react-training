@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import { TodoListItem } from "../modules";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 //table設計樣式
 const Root = styled("div")(
@@ -42,6 +43,7 @@ const Root = styled("div")(
 );
 
 const Edit_todo_items = () => {
+  const {t, i18n} = useTranslation();
   const {
     register,
     handleSubmit,
@@ -76,7 +78,7 @@ const Edit_todo_items = () => {
       {/* item & plus icon */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
         <Typography variant="h5" sx={{ mr: 17 }}>
-          Items
+          {t("edit_todo_item_add")}
         </Typography>
         <AddCircleIcon
           onClick={() => {
@@ -92,9 +94,9 @@ const Edit_todo_items = () => {
           <table aria-label="custom pagination table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Priority</th>
-                <th>Save/ Delete</th>
+                <th>{t("edit_todo_item_name")}</th>
+                <th>{t("edit_todo_item_priority")}</th>
+                <th>{t("edit_todo_item_save")}/ {t("edit_todo_item_delete")}</th>
               </tr>
             </thead>
             <tbody>
@@ -102,7 +104,7 @@ const Edit_todo_items = () => {
                 <td>
                   <TextField
                     id="standard-basic"
-                    label="name"
+                    label={t("edit_todo_item_name")}
                     variant="standard"
                     {...register("name")}
                   />
@@ -110,24 +112,26 @@ const Edit_todo_items = () => {
                 <td style={{ width: 120 }} align="right">
                   <FormControl variant="standard" fullWidth>
                     <InputLabel id="demo-simple-select-label">
-                      Priority
+                    {t("edit_todo_item_priority")}
                     </InputLabel>
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       {...register("priority")}
                     >
-                      <MenuItem value="high">{Priority.HIGH}</MenuItem>
-                      <MenuItem value="medium">{Priority.MEDIUM}</MenuItem>
-                      <MenuItem value="low">{Priority.LOW}</MenuItem>
+                      <MenuItem value={Priority.HIGH}>{t("edit_todo_item_priority_high")}</MenuItem>
+                      <MenuItem value={Priority.MEDIUM}>{t("edit_todo_item_priority_medium")}</MenuItem>
+                      <MenuItem value={Priority.LOW}>{t("edit_todo_item_priority_low")}</MenuItem>
                     </Select>
                   </FormControl>
                 </td>
                 <td style={{ width: 100 }} align="right">
+
+                  {/* NOTE 不知道為什麼按兩個button都會post */}
                   <button style={{ marginLeft: 6 }} type="submit">
                     <SaveIcon />
                   </button>
-                  <button style={{ marginLeft: 6 }}>
+                  <button style={{ marginLeft: 6 }} type="button">
                     <DeleteIcon />
                   </button>
                 </td>

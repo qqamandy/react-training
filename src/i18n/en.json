@@ -1,0 +1,23 @@
+{
+    "home_title_title": "Todo List",
+    "home_title_button": "New Todo",
+    "home_body_title": "Title",
+    "home_body_create_at": "Create At",
+    "home_body_description": "Description",
+    "home_body_detail_count": "Detail Count",
+    "new_todo_title_title": "New Todo",
+    "new_todo_title_button": "Save",
+    "new_todo_body_basic_info": "Basic info",
+    "new_todo_body_title": "title",
+    "new_todo_body_description": "description",
+    "edit_todo_title_title": "Edit TODO",
+    "edit_todo_item_add": "Items",
+    "edit_todo_item_name": "Name",
+    "edit_todo_item_priority": "Priority",
+    "edit_todo_item_priority_high": "HIGH",
+    "edit_todo_item_priority_medium": "MEDIUM",
+    "edit_todo_item_priority_low": "LOW",
+    "edit_todo_item_save": "Save",
+    "edit_todo_item_delete": "Delete"
+
+}

@@ -7,6 +7,7 @@ import { TodoList } from "../modules";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const New_todo = () => {
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ const New_todo = () => {
       updatedAt: undefined,
     },
   });
+  const {t, i18n} = useTranslation();
+
 
 
   return (
@@ -49,7 +52,7 @@ const New_todo = () => {
               navigate("/");
             }}
           />
-          <Typography variant="h4">New TODO</Typography>
+          <Typography variant="h4">{t("new_todo_title_title")}</Typography>
         </Box>
 
         <Button
@@ -58,7 +61,7 @@ const New_todo = () => {
           color="secondary"
           style={{ color: "#fff" }}
         >
-          Save
+          {t("new_todo_title_button")}
         </Button>
       </Box>
 
@@ -72,12 +75,12 @@ const New_todo = () => {
           }}
         >
           <Typography variant="h5" sx={{ mb: 4 }}>
-            Basic info
+            {t("new_todo_body_basic_info")}
           </Typography>
 
           <TextField
             id="outlined-basic"
-            label="title"
+            label={t("new_todo_body_title")}
             variant="outlined"
             {...register("name", {
               maxLength: { value: 16, message: "Min length is 16." },
@@ -90,7 +93,7 @@ const New_todo = () => {
           <TextField
             sx={{ mt: 4 }}
             id="outlined-basic"
-            label="description"
+            label={t("new_todo_body_description")}
             variant="outlined"
             {...register("description")}
           />
