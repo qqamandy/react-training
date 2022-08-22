@@ -4,10 +4,28 @@ import { Button, Typography, TextField } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { TodoList } from "../modules";
-import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useMutation } from "react-query";
+
+
+const schema = yup.object().shape({
+  name: yup.string().required().max(16),
+  description: yup.string(),
+});
+
+interface todoParameter {
+  name:string
+  description: string
+}
+
+interface TodoResponse {
+  id: number;
+}
+
 
 const New_todo = () => {
   const navigate = useNavigate();
@@ -16,30 +34,32 @@ const New_todo = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<TodoList>({
-    defaultValues: {
-      id: uuidv4(),
-      name: "",
-      description: "",
-      createdAt: new Date().toISOString(),
-      items: [],
-      updatedAt: undefined,
-    },
+    resolver: yupResolver(schema),
   });
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
 
-
+  const postNewTodo = useMutation<TodoResponse, unknown, todoParameter>((newTodo) => {
+    const correctType: Promise<TodoResponse> = null as unknown as Promise<TodoResponse>;
+    const promise = axios.post<TodoResponse>("/api/todoList/", newTodo).then(resp => resp.data);
+    return promise;
+  });
 
   return (
     <Container
       maxWidth="md"
       component="form"
-      onSubmit={handleSubmit(async(data) => {
-        console.log(data);
-        //NOTE API發不出去
-        await axios.post('/api/todoList/',{
-          name: data.name,
-          description: data.description
-        })
+      // onSubmit={handleSubmit(
+      //   async(data) => {
+      //   console.log(data);
+      //   //NOTE API發不出去
+      //   await axios.post('/api/todoList/',{
+      //     name: data.name,
+      //     description: data.description
+      //   })
+      // })}
+
+      onSubmit={handleSubmit((data) => {
+        postNewTodo.mutate({ name: data.name, description: data.description || '' });
       })}
     >
       {/* <New_todo_title/> */}
@@ -82,10 +102,7 @@ const New_todo = () => {
             id="outlined-basic"
             label={t("new_todo_body_title")}
             variant="outlined"
-            {...register("name", {
-              maxLength: { value: 16, message: "Min length is 16." },
-              required: "Title is required.",
-            })}
+            {...register("name")}
           />
           <Typography component="p" sx={{ color: "red" }}>
             {errors.name?.message}

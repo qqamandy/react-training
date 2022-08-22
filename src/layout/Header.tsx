@@ -22,8 +22,8 @@ const changeLanguage = (e)=>{
 }
 
   return <Box sx={{ borderBottom: 3, borderColor:'#ccc', py:5, px:4, textAlign:"right" }} >
-    <FormControl variant="standard"  sx={{width:80}}>
-                  <InputLabel id="demo-simple-select-label">English</InputLabel>
+    <FormControl variant="standard"  sx={{width:100}}>
+                  <InputLabel id="demo-simple-select-label">Language</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"

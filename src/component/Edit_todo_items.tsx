@@ -8,16 +8,18 @@ import {
   FormControl,
   TextField,
 } from "@mui/material";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import { styled } from "@mui/system";
 import { Priority } from "../modules";
 import { useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
 import { TodoListItem } from "../modules";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { useMutation } from "react-query";
 
 //table設計樣式
 const Root = styled("div")(
@@ -42,22 +44,20 @@ const Root = styled("div")(
   `
 );
 
+const schema = yup.object().shape({
+  name: yup.string(),
+  priority: yup.string(),
+});
+
 const Edit_todo_items = () => {
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<TodoListItem>({
-    defaultValues: {
-      listId: "",
-      id: uuidv4(),
-      name: "",
-      //NOTE priority不確定怎麼寫
-      priority: Priority.LOW,
-      createdAt: new Date().toISOString(),
-      updatedAt: undefined,
-    },
+    resolver: yupResolver(schema),
   });
 
   const [open, setOpen] = useState(false);
@@ -73,6 +73,7 @@ const Edit_todo_items = () => {
           name: data.name,
           priority: data.priority,
         });
+        setOpen(false)
       })}
     >
       {/* item & plus icon */}
@@ -96,7 +97,9 @@ const Edit_todo_items = () => {
               <tr>
                 <th>{t("edit_todo_item_name")}</th>
                 <th>{t("edit_todo_item_priority")}</th>
-                <th>{t("edit_todo_item_save")}/ {t("edit_todo_item_delete")}</th>
+                <th>
+                  {t("edit_todo_item_save")}/ {t("edit_todo_item_delete")}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -112,26 +115,41 @@ const Edit_todo_items = () => {
                 <td style={{ width: 120 }} align="right">
                   <FormControl variant="standard" fullWidth>
                     <InputLabel id="demo-simple-select-label">
-                    {t("edit_todo_item_priority")}
+                      {t("edit_todo_item_priority")}
                     </InputLabel>
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       {...register("priority")}
                     >
-                      <MenuItem value={Priority.HIGH}>{t("edit_todo_item_priority_high")}</MenuItem>
-                      <MenuItem value={Priority.MEDIUM}>{t("edit_todo_item_priority_medium")}</MenuItem>
-                      <MenuItem value={Priority.LOW}>{t("edit_todo_item_priority_low")}</MenuItem>
+                      <MenuItem value={Priority.HIGH}>
+                        {t("edit_todo_item_priority_high")}
+                      </MenuItem>
+                      <MenuItem value={Priority.MEDIUM}>
+                        {t("edit_todo_item_priority_medium")}
+                      </MenuItem>
+                      <MenuItem value={Priority.LOW}>
+                        {t("edit_todo_item_priority_low")}
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </td>
                 <td style={{ width: 100 }} align="right">
-
-                  {/* NOTE 不知道為什麼按兩個button都會post */}
-                  <button style={{ marginLeft: 6 }} type="submit">
+                  <button
+                    style={{ marginLeft: 6 }}
+                    type="submit"
+                    
+                  >
                     <SaveIcon />
                   </button>
-                  <button style={{ marginLeft: 6 }} type="button">
+                  <button
+                    style={{ marginLeft: 6 }}
+                    type="button"
+                    onClick={() => {
+                      setValue("name", "");
+                      setOpen(false);
+                    }}
+                  >
                     <DeleteIcon />
                   </button>
                 </td>

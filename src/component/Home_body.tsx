@@ -7,9 +7,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
-import { useState, useEffect } from "react";
 import { TodoListSummary } from "../modules";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 
 //Table 樣式設定
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -19,19 +19,17 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const Home_body = () => {
-  const [TodoListSummary, setTodoListSummary] = useState<TodoListSummary>();
-  const {t, i18n} = useTranslation();
 
-  useEffect(() => {
-    //axios抓資料
-    let getTodoListSummary = () => {
-      axios.get("/api/todoList").then((res) => {
-        console.log(res.data);
-      });
-    };
-    getTodoListSummary();
-  }, []);
+const Home_body = () => {
+  const {t, i18n} = useTranslation();
+  const {data, status, isLoading, isError, isSuccess} = useQuery(
+    'getTodoSummary', async()=>{
+    const res = await axios.get("http://localhost:3000/api/todoList")
+    return res;
+    })
+
+  // console.log(data, status, isLoading, isError, isSuccess)
+    
 
   return (
     <TableContainer component={Paper}>

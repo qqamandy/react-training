@@ -6,6 +6,12 @@ import Main from "./layout/Main";
 import {  createTheme } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
 import Home from "./page/Home";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
+
+const queryClient = new QueryClient()
 
 
 
@@ -24,6 +30,7 @@ const theme = createTheme({
 function App() {
   return (
     <div className="App" >
+          <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <Header />
         <BrowserRouter>
@@ -33,6 +40,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
+          </QueryClientProvider>
     </div>
   );
 }
