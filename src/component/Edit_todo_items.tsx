@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { TodoListItem } from "../modules";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 //table設計樣式
@@ -50,15 +50,15 @@ const schema = yup.object().shape({
   priority: yup.string(),
 });
 
-interface ItemResponse{
-  id: number
+interface ItemResponse {
+  id: number;
 }
 
-interface itemParameter{
-  id: string
-  name: string
-  priority: string
-} 
+interface itemParameter {
+  id: string | undefined;
+  name: string;
+  priority: string;
+}
 
 const Edit_todo_items = () => {
   const { t, i18n } = useTranslation();
@@ -71,29 +71,45 @@ const Edit_todo_items = () => {
     resolver: yupResolver(schema),
   });
 
-  const { id } = useParams<string>();
-
+  const { id } = useParams();
   const [open, setOpen] = useState(false);
-  const postTodoItem = useMutation<ItemResponse, unknown, itemParameter>((newItem)=>{const correctType: Promise<ItemResponse> = null as unknown as Promise<ItemResponse>;
-    const promise = axios.post<ItemResponse>(`http://localhost:3001/api/todoList/${id}/items`, newItem).then(resp => resp.data);
-    return promise;})
 
-    console.log(`id = ${id}`);
+  //get item
+  const { data } = useQuery("getItem", () =>
+    axios.get(`http://localhost:3001/api/todoList/${id}`)
+  );
+  // console.log(data)
+
+  const itemsData = data?.data.items;
+  console.log(itemsData);
+
+  //post item
+  const postTodoItem = useMutation<ItemResponse, unknown, itemParameter>(
+    (newItem) => {
+      const correctType: Promise<ItemResponse> =
+        null as unknown as Promise<ItemResponse>;
+      const promise = axios
+        .post<ItemResponse>(
+          `http://localhost:3001/api/todoList/${id}/items`,
+          newItem
+        )
+        .then((resp) => resp.data);
+      return promise;
+    }
+  );
+
   return (
     <Box
       component="form"
-      // onSubmit={handleSubmit(async (data) => {
-      //   console.log(data);
-      //   //NOTE API發不出去
-      //   await axios.post(`/api/todoList/${data.id}/items`, {
-      //     id: data.id,
-      //     name: data.name,
-      //     priority: data.priority,
-      //   });
-      //   setOpen(false)
-      // })}
-      onSubmit={handleSubmit((data)=>{
-        postTodoItem.mutate({id:id, name: data.name, priority:data.priority ||'' })
+      onSubmit={handleSubmit((data) => {
+        postTodoItem.mutate({
+          id: id,
+          name: data.name,
+          priority: data.priority || "",
+        });
+        setValue("name", "");
+
+        setOpen(false)
       })}
     >
       {/* item & plus icon */}
@@ -109,9 +125,37 @@ const Edit_todo_items = () => {
       </Box>
 
       {/* table */}
+      {itemsData?.length > 0 ? (
+        itemsData?.map((item) => {
+          return (
+            <Root sx={{ width: 500, maxWidth: "100%" }}>
+              <table aria-label="custom pagination table">
+                <thead>
+                  <tr>
+                    <th>{t("edit_todo_item_name")}</th>
+                    <th>{t("edit_todo_item_priority")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{item.name}</td>
+                    <td style={{ width: 120, height:60 }} align="right">
+                      {item.priority}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </Root>
+          );
+        })
+      ) : (
+        <Box></Box>
+      )}
+
+      {/* toggle table */}
       {/* //NOTE 要再修 */}
       {open == true && (
-        <Root sx={{ width: 500, maxWidth: "100%" }}>
+        <Root sx={{ width: 500, maxWidth: "100%", mt:5 }}>
           <table aria-label="custom pagination table">
             <thead>
               <tr>
@@ -155,11 +199,7 @@ const Edit_todo_items = () => {
                   </FormControl>
                 </td>
                 <td style={{ width: 100 }} align="right">
-                  <button
-                    style={{ marginLeft: 6 }}
-                    type="submit"
-                    
-                  >
+                  <button style={{ marginLeft: 6 }} type="submit">
                     <SaveIcon />
                   </button>
                   <button

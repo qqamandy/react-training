@@ -12,7 +12,6 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-
 //Table 樣式設定
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -23,14 +22,23 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const Home_body = () => {
   const { t, i18n } = useTranslation();
-  const { data, status, isLoading, isError, isSuccess } = useQuery(
+  const { data } = useQuery(
     "getTodoSummary",
     () => axios.get("http://localhost:3001/api/todoList")
   );
 
-  console.log(status, isLoading, isError, isSuccess, data)
+  //detail counts
+  const detailCounts = (counts: number): string => {
+    let result = "";
+    for (let i = 1; i <= counts; i++) {
+      result += "*";
+    }
+    return result;
+  };
+
+  console.log(data);
   const homeData = data?.data;
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <TableContainer component={Paper}>
@@ -51,15 +59,31 @@ const Home_body = () => {
         </TableHead>
         <TableBody>
           {homeData?.map((homeData) => (
-          <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-            <TableCell component="th" scope="row" onClick={()=>{navigate(`/main/editTodo/${homeData.id}`)}}>
-              {homeData.name}
-            </TableCell>
-            <TableCell align="left">{homeData.createdAt}</TableCell>
-            <TableCell align="left">{homeData.description}</TableCell>
-            <TableCell align="left">{homeData.numberOfItems}</TableCell>
-          </TableRow>
-           ))} 
+            <TableRow
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+               onClick={() => {
+                  navigate(`/main/editTodo/${homeData.id}`);
+                }}
+            >
+              <TableCell
+                component="th"
+                scope="row"
+               
+              >
+                {homeData.name}
+              </TableCell>
+              <TableCell align="left">
+                {homeData.createdAt.slice(0, 10)} |{" "}
+                {homeData.createdAt.slice(11, 19)} | CET
+              </TableCell>
+              <TableCell align="left">{homeData.description}</TableCell>
+              <TableCell align="left">
+                {homeData.numberOfItems.length != 0
+                  ? detailCounts(homeData.numberOfItems)
+                  : ""}
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>
