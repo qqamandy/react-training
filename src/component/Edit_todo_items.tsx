@@ -20,6 +20,7 @@ import { TodoListItem } from "../modules";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "react-query";
+import { useParams } from "react-router-dom";
 
 //table設計樣式
 const Root = styled("div")(
@@ -49,6 +50,16 @@ const schema = yup.object().shape({
   priority: yup.string(),
 });
 
+interface ItemResponse{
+  id: number
+}
+
+interface itemParameter{
+  id: string
+  name: string
+  priority: string
+} 
+
 const Edit_todo_items = () => {
   const { t, i18n } = useTranslation();
   const {
@@ -60,20 +71,29 @@ const Edit_todo_items = () => {
     resolver: yupResolver(schema),
   });
 
-  const [open, setOpen] = useState(false);
+  const { id } = useParams<string>();
 
+  const [open, setOpen] = useState(false);
+  const postTodoItem = useMutation<ItemResponse, unknown, itemParameter>((newItem)=>{const correctType: Promise<ItemResponse> = null as unknown as Promise<ItemResponse>;
+    const promise = axios.post<ItemResponse>(`http://localhost:3001/api/todoList/${id}/items`, newItem).then(resp => resp.data);
+    return promise;})
+
+    console.log(`id = ${id}`);
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit(async (data) => {
-        console.log(data);
-        //NOTE API發不出去
-        await axios.post(`/api/todoList/${data.id}/items`, {
-          id: data.id,
-          name: data.name,
-          priority: data.priority,
-        });
-        setOpen(false)
+      // onSubmit={handleSubmit(async (data) => {
+      //   console.log(data);
+      //   //NOTE API發不出去
+      //   await axios.post(`/api/todoList/${data.id}/items`, {
+      //     id: data.id,
+      //     name: data.name,
+      //     priority: data.priority,
+      //   });
+      //   setOpen(false)
+      // })}
+      onSubmit={handleSubmit((data)=>{
+        postTodoItem.mutate({id:id, name: data.name, priority:data.priority ||'' })
       })}
     >
       {/* item & plus icon */}

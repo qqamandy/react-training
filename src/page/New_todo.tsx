@@ -32,6 +32,7 @@ const New_todo = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<TodoList>({
     resolver: yupResolver(schema),
@@ -40,7 +41,9 @@ const New_todo = () => {
 
   const postNewTodo = useMutation<TodoResponse, unknown, todoParameter>((newTodo) => {
     const correctType: Promise<TodoResponse> = null as unknown as Promise<TodoResponse>;
-    const promise = axios.post<TodoResponse>("/api/todoList/", newTodo).then(resp => resp.data);
+    const promise = axios.post<TodoResponse>("http://localhost:3001/api/todoList/", newTodo).then(resp => resp.data);
+    setValue("name","");
+    setValue("description","");
     return promise;
   });
 
@@ -60,6 +63,7 @@ const New_todo = () => {
 
       onSubmit={handleSubmit((data) => {
         postNewTodo.mutate({ name: data.name, description: data.description || '' });
+        console.log(data)
       })}
     >
       {/* <New_todo_title/> */}

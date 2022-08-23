@@ -11,7 +11,7 @@ const Main = () => {
   return (
     <Box sx={{ backgroundColor: "#E9E9E9", py: 9,minHeight:590 }}>
       <Routes>
-        <Route path="/editTodo" element={<Edit_todo/>} />
+        <Route path="/editTodo/:id" element={<Edit_todo/>} />
         <Route path="/newTodo" element={<New_todo/>}/>
       </Routes>
       
