@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { TodoListItem } from "../modules";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 //table設計樣式
@@ -61,6 +61,10 @@ interface itemParameter {
 }
 
 const Edit_todo_items = () => {
+  //post完後自動fetch新資料
+  const queryClient = useQueryClient();
+  queryClient.invalidateQueries(["getItem"]);
+
   const { t, i18n } = useTranslation();
   const {
     register,
@@ -75,7 +79,7 @@ const Edit_todo_items = () => {
   const [open, setOpen] = useState(false);
 
   //get item
-  const { data } = useQuery("getItem", () =>
+  const { data, refetch } = useQuery("getItem", () =>
     axios.get(`http://localhost:3001/api/todoList/${id}`)
   );
   // console.log(data)
@@ -108,8 +112,8 @@ const Edit_todo_items = () => {
           priority: data.priority || "",
         });
         setValue("name", "");
-
-        setOpen(false)
+        refetch();
+        setOpen(false);
       })}
     >
       {/* item & plus icon */}
@@ -128,7 +132,7 @@ const Edit_todo_items = () => {
       {itemsData?.length > 0 ? (
         itemsData?.map((item) => {
           return (
-            <Root sx={{ width: 500, maxWidth: "100%" }}>
+            <Root sx={{ width: 500, maxWidth: "100%" }} key={item.id}>
               <table aria-label="custom pagination table">
                 <thead>
                   <tr>
@@ -139,7 +143,7 @@ const Edit_todo_items = () => {
                 <tbody>
                   <tr>
                     <td>{item.name}</td>
-                    <td style={{ width: 120, height:60 }} align="right">
+                    <td style={{ width: 120, height: 60 }} align="right">
                       {item.priority}
                     </td>
                   </tr>
@@ -153,9 +157,8 @@ const Edit_todo_items = () => {
       )}
 
       {/* toggle table */}
-      {/* //NOTE 要再修 */}
       {open == true && (
-        <Root sx={{ width: 500, maxWidth: "100%", mt:5 }}>
+        <Root sx={{ width: 500, maxWidth: "100%", mt: 5 }}>
           <table aria-label="custom pagination table">
             <thead>
               <tr>

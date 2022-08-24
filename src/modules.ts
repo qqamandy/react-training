@@ -1,10 +1,10 @@
 export interface TodoListSummary{
-    id: string;
-    name: string;
-    description?: string;
-    createdAt: string;
-    updatedAt?: string;
-    numberOfItems: number;
+    readonly id: string;
+    readonly name: string;
+    readonly description?: string;
+    readonly createdAt: string;
+    readonly updatedAt?: string;
+    readonly numberOfItems: number;
 }
 
 export interface TodoList {

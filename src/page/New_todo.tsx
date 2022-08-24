@@ -11,21 +11,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMutation } from "react-query";
 
-
 const schema = yup.object().shape({
   name: yup.string().required().max(16),
   description: yup.string(),
 });
 
 interface todoParameter {
-  name:string
-  description: string
+  name: string;
+  description: string;
 }
 
 interface TodoResponse {
   id: number;
 }
-
 
 const New_todo = () => {
   const navigate = useNavigate();
@@ -39,31 +37,29 @@ const New_todo = () => {
   });
   const { t, i18n } = useTranslation();
 
-  const postNewTodo = useMutation<TodoResponse, unknown, todoParameter>((newTodo) => {
-    const correctType: Promise<TodoResponse> = null as unknown as Promise<TodoResponse>;
-    const promise = axios.post<TodoResponse>("http://localhost:3001/api/todoList/", newTodo).then(resp => resp.data);
-    setValue("name","");
-    setValue("description","");
-    return promise;
-  });
+  const postNewTodo = useMutation<TodoResponse, unknown, todoParameter>(
+    (newTodo) => {
+      const correctType: Promise<TodoResponse> =
+        null as unknown as Promise<TodoResponse>;
+      const promise = axios
+        .post<TodoResponse>("http://localhost:3001/api/todoList/", newTodo)
+        .then((resp) => resp.data);
+      setValue("name", "");
+      setValue("description", "");
+      return promise;
+    }
+  );
 
   return (
     <Container
       maxWidth="md"
       component="form"
-      // onSubmit={handleSubmit(
-      //   async(data) => {
-      //   console.log(data);
-      //   //NOTE API發不出去
-      //   await axios.post('/api/todoList/',{
-      //     name: data.name,
-      //     description: data.description
-      //   })
-      // })}
-
       onSubmit={handleSubmit((data) => {
-        postNewTodo.mutate({ name: data.name, description: data.description || '' });
-        console.log(data)
+        postNewTodo.mutate({
+          name: data.name,
+          description: data.description || "",
+        });
+        console.log(data);
       })}
     >
       {/* <New_todo_title/> */}
